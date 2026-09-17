@@ -26,6 +26,19 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Restore debug keystore
+        run: |
+          if (Test-Path "debug.keystore.base64") {
+            Write-Host "Decoding debug.keystore from debug.keystore.base64"
+            $base64 = Get-Content "debug.keystore.base64" -Raw
+            [IO.File]::WriteAllBytes("$PWD\debug.keystore", [Convert]::FromBase64String($base64))
+          } elseif (-not (Test-Path "debug.keystore")) {
+            Write-Host "Generating fallback debug keystore"
+            keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          }
+          Get-Item debug.keystore
+        shell: powershell
+
       - name: Verify Gradle & Run Unit Tests on Windows
         run: |
           if (Test-Path ".\gradlew.bat") {
