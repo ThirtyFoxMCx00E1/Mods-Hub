@@ -106,7 +106,7 @@ fun PublisherOnlyNoticeDialog(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         PolicyBullet(
-                            title = "Official Ownership (v1.1)",
+                            title = "Official Ownership (v1.2)",
                             desc = "The blogspot website is the sole certified publisher for GTA SA Mobile & Minecraft Bedrock mods."
                         )
                         PolicyBullet(

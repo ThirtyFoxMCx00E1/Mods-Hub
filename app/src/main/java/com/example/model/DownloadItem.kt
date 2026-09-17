@@ -10,6 +10,7 @@ data class DownloadItem(
     val status: DownloadState,
     val progressPercent: Int = 0,
     val localUri: String? = null,
+    val targetPath: String = "",
     val timestamp: Long = System.currentTimeMillis(),
     val errorMessage: String? = null
 )

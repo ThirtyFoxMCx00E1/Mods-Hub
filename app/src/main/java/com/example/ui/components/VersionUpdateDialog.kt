@@ -1,41 +1,13 @@
 package com.example.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.SystemUpdate
-import androidx.compose.material.icons.filled.Verified
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,24 +16,22 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.theme.AmberGta
-import com.example.ui.theme.CyanAccent
-import com.example.ui.theme.EmeraldMinecraft
-import com.example.ui.theme.SlateCard
-import com.example.ui.theme.SlateCardBorder
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextPrimary
-import com.example.ui.theme.TextSecondary
+import com.example.ui.theme.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun VersionUpdateDialog(
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onOpenCustomPath: (() -> Unit)? = null,
+    onOpenAudioSettings: (() -> Unit)? = null,
+    onPlayClick: () -> Unit = {}
 ) {
     val coroutineScope = rememberCoroutineScope()
     var isChecking by remember { mutableStateOf(false) }
-    var updateMessage by remember { mutableStateOf("Version 1.1 is current, featuring GitHub Actions CI/CD workflows, Windows PC compatibility, and full Blogspot sync.") }
+    var updateMessage by remember {
+        mutableStateOf("Version 1.2 is installed and active. Includes custom download folder path anywhere, 2h looping lobby music, and UI button click sound effects.")
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -72,27 +42,27 @@ fun VersionUpdateDialog(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(38.dp)
                         .clip(CircleShape)
                         .background(CyanAccent.copy(alpha = 0.2f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.SystemUpdate,
-                        contentDescription = "Version 1.1 Update",
+                        contentDescription = "Version 1.2 Update",
                         tint = CyanAccent,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(22.dp)
                     )
                 }
                 Column {
                     Text(
-                        text = "Version 1.1 Release",
+                        text = "Version 1.2 Update",
                         style = MaterialTheme.typography.titleMedium,
                         color = TextPrimary,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Build 1.1 (GitHub CI/CD & PC Ready)",
+                        text = "Build 1.2 (Custom Path & Audio Engine)",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextMuted,
                         fontSize = 11.sp
@@ -101,11 +71,11 @@ fun VersionUpdateDialog(
             }
         },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 // Status banner
                 Card(
                     colors = CardDefaults.cardColors(containerColor = Color(0xFF0F172A)),
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(12.dp),
                     border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(SlateCardBorder))
                 ) {
                     Row(
@@ -116,13 +86,13 @@ fun VersionUpdateDialog(
                         Icon(
                             imageVector = Icons.Default.Verified,
                             contentDescription = null,
-                            tint = Color(0xFF38BDF8),
-                            modifier = Modifier.size(20.dp)
+                            tint = Color(0xFF10B981),
+                            modifier = Modifier.size(22.dp)
                         )
                         Column {
                             Text(
-                                text = "v1.1 Official Owner Distribution",
-                                color = Color(0xFF38BDF8),
+                                text = "v1.2 Release: Custom Folders & Audio",
+                                color = Color(0xFF10B981),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp
                             )
@@ -136,7 +106,7 @@ fun VersionUpdateDialog(
                     }
                 }
 
-                // Configured Game Paths
+                // Feature Highlights
                 Card(
                     colors = CardDefaults.cardColors(containerColor = Color(0xFF131B2E)),
                     shape = RoundedCornerShape(10.dp)
@@ -146,61 +116,68 @@ fun VersionUpdateDialog(
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Text(
-                            text = "Configured GTA SA Mod Target Path:",
+                            text = "New in Version 1.2:",
                             color = AmberGta,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp
+                            fontSize = 12.sp
                         )
-                        Surface(
-                            color = Color(0xFF0F172A),
-                            shape = RoundedCornerShape(6.dp)
-                        ) {
-                            Text(
-                                text = "emulated/0/Android_unprotected/data/com.rockstargames.gtasa/mods & files/CLEO or direct in root",
-                                color = CyanAccent,
-                                fontSize = 10.sp,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                lineHeight = 14.sp
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(2.dp))
 
                         Text(
-                            text = "Minecraft Bedrock Target:",
-                            color = EmeraldMinecraft,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp
+                            text = "• Custom Download Directory: Download anywhere in directory folder with editable paths & quick presets.",
+                            color = Color(0xFFE2E8F0),
+                            fontSize = 11.sp,
+                            lineHeight = 15.sp
                         )
                         Text(
-                            text = "Auto-import .mcaddon, .mcpack, .mcworld via Android package manager",
-                            color = TextMuted,
-                            fontSize = 10.sp
+                            text = "• 2-Hour Looping Lobby Music: Background playback with controls for volume, looping, and local videoplayback.m4a loading.",
+                            color = Color(0xFFE2E8F0),
+                            fontSize = 11.sp,
+                            lineHeight = 15.sp
+                        )
+                        Text(
+                            text = "• Mystery Alert Button Clicks: Satisfying UI sound effect chime for all interactive buttons.",
+                            color = Color(0xFFE2E8F0),
+                            fontSize = 11.sp,
+                            lineHeight = 15.sp
                         )
                     }
                 }
 
-                // GitHub Workflows & CI/CD info
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF0D1424)),
-                    shape = RoundedCornerShape(10.dp)
+                // Quick Launchers
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            text = "v1.1 CI/CD Workflows Included:",
-                            color = CyanAccent,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp
-                        )
-                        Text(
-                            text = "• .github/workflows/android.yml (Automated APK build & test)\n• .github/workflows/windows-build.yml (Windows PC build)\n• gradlew & gradlew.bat wrapper scripts included",
-                            color = TextSecondary,
-                            fontSize = 10.sp,
-                            lineHeight = 14.sp
-                        )
+                    if (onOpenCustomPath != null) {
+                        OutlinedButton(
+                            onClick = {
+                                onPlayClick()
+                                onOpenCustomPath()
+                            },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = CyanAccent),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, CyanAccent.copy(alpha = 0.5f))
+                        ) {
+                            Icon(Icons.Default.FolderOpen, contentDescription = null, modifier = Modifier.size(14.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("Set Folder", fontSize = 11.sp)
+                        }
+                    }
+
+                    if (onOpenAudioSettings != null) {
+                        OutlinedButton(
+                            onClick = {
+                                onPlayClick()
+                                onOpenAudioSettings()
+                            },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF10B981)),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF10B981).copy(alpha = 0.5f))
+                        ) {
+                            Icon(Icons.Default.MusicNote, contentDescription = null, modifier = Modifier.size(14.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("Audio / 2h", fontSize = 11.sp)
+                        }
                     }
                 }
             }
@@ -208,12 +185,13 @@ fun VersionUpdateDialog(
         confirmButton = {
             Button(
                 onClick = {
+                    onPlayClick()
                     if (!isChecking) {
                         isChecking = true
                         coroutineScope.launch {
-                            delay(800)
+                            delay(600)
                             isChecking = false
-                            updateMessage = "Checked just now: Mod Hub is on the latest Version 1.1 (All systems up to date)."
+                            updateMessage = "Mod Hub v1.2 is fully up to date. Custom paths and 2h audio engine active."
                         }
                     }
                 },
@@ -241,7 +219,10 @@ fun VersionUpdateDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = {
+                onPlayClick()
+                onDismiss()
+            }) {
                 Text("Close", color = TextSecondary)
             }
         },

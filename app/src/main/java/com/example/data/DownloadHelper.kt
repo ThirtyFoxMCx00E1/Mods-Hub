@@ -21,12 +21,14 @@ class DownloadHelper(private val context: Context) {
 
     private val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager
     private val scope = CoroutineScope(Dispatchers.Main)
+    val customPathManager = CustomPathManager(context)
 
     private val _downloads = MutableStateFlow<List<DownloadItem>>(emptyList())
     val downloads: StateFlow<List<DownloadItem>> = _downloads.asStateFlow()
 
-    fun startDownload(mod: ModItem) {
+    fun startDownload(mod: ModItem, overridePath: String? = null) {
         val safeFileName = "${mod.id}_${mod.version.replace(".", "_")}${mod.fileExtension}"
+        val targetPath = overridePath ?: customPathManager.getEffectivePath(mod.game)
 
         try {
             var downloadId = System.currentTimeMillis()
@@ -36,7 +38,7 @@ class DownloadHelper(private val context: Context) {
                     val uri = Uri.parse(mod.directDownloadUrl)
                     val request = DownloadManager.Request(uri).apply {
                         setTitle("${mod.title} (${mod.version})")
-                        setDescription("Downloading mod from ${mod.author}")
+                        setDescription("Downloading to $targetPath")
                         setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                         setAllowedOverMetered(true)
                         setAllowedOverRoaming(true)
@@ -59,11 +61,12 @@ class DownloadHelper(private val context: Context) {
                 game = mod.game,
                 fileSize = mod.fileSize,
                 status = DownloadState.DOWNLOADING,
-                progressPercent = 15
+                progressPercent = 15,
+                targetPath = targetPath
             )
 
             _downloads.value = listOf(newItem) + _downloads.value.filter { it.modId != mod.id }
-            Toast.makeText(context, "Started downloading ${mod.title}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Target: $targetPath\nDownloading ${mod.title}", Toast.LENGTH_LONG).show()
 
             // Smooth progress updater to simulate real-time progress for responsive UI feedback
             scope.launch {
@@ -75,7 +78,7 @@ class DownloadHelper(private val context: Context) {
                                 item.copy(
                                     status = DownloadState.COMPLETED,
                                     progressPercent = 100,
-                                    localUri = "file://${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/Mods/${mod.game.displayName}/$safeFileName"
+                                    localUri = "file://${targetPath}/$safeFileName"
                                 )
                             } else {
                                 item.copy(progressPercent = p)
@@ -83,7 +86,7 @@ class DownloadHelper(private val context: Context) {
                         } else item
                     }
                 }
-                Toast.makeText(context, "Download complete: $safeFileName", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Mod saved to: $targetPath/$safeFileName", Toast.LENGTH_SHORT).show()
             }
 
         } catch (e: Exception) {
