@@ -1,6 +1,6 @@
 {
   "name": "Mod Hub",
-  "description": "Download curated GTA SA Mobile and Minecraft Bedrock mods from verified Blogspot posts with HTML guides and one-tap downloads.",
+  "description": "Version 1.1: Download curated GTA SA Mobile and Minecraft Bedrock mods from verified Blogspot posts with HTML guides, Android unprotected data path, and one-tap downloads.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

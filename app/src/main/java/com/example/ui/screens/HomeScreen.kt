@@ -144,7 +144,7 @@ fun HomeScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Publisher-Only Mode • v1.0",
+                                text = "Publisher-Only Mode • v1.1",
                                 color = TextPrimary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp

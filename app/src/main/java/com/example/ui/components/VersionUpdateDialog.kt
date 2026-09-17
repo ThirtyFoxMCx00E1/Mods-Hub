@@ -61,7 +61,7 @@ fun VersionUpdateDialog(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var isChecking by remember { mutableStateOf(false) }
-    var updateMessage by remember { mutableStateOf("Version 1.0 is current and fully synced with the Blogspot owner repository.") }
+    var updateMessage by remember { mutableStateOf("Version 1.1 is current, featuring GitHub Actions CI/CD workflows, Windows PC compatibility, and full Blogspot sync.") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -79,20 +79,20 @@ fun VersionUpdateDialog(
                 ) {
                     Icon(
                         imageVector = Icons.Default.SystemUpdate,
-                        contentDescription = "Version 1.0 Update",
+                        contentDescription = "Version 1.1 Update",
                         tint = CyanAccent,
                         modifier = Modifier.size(20.dp)
                     )
                 }
                 Column {
                     Text(
-                        text = "Version 1.0 Release",
+                        text = "Version 1.1 Release",
                         style = MaterialTheme.typography.titleMedium,
                         color = TextPrimary,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Build 1.0 (Stable Official)",
+                        text = "Build 1.1 (GitHub CI/CD & PC Ready)",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextMuted,
                         fontSize = 11.sp
@@ -121,7 +121,7 @@ fun VersionUpdateDialog(
                         )
                         Column {
                             Text(
-                                text = "v1.0 Official Owner Distribution",
+                                text = "v1.1 Official Owner Distribution",
                                 color = Color(0xFF38BDF8),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp
@@ -180,13 +180,29 @@ fun VersionUpdateDialog(
                     }
                 }
 
-                // GitHub Export Notice
-                Text(
-                    text = "Project Package: Ready for export to GitHub / Git repository via AI Studio settings menu (Export as ZIP or Push to GitHub).",
-                    color = TextMuted,
-                    fontSize = 11.sp,
-                    lineHeight = 15.sp
-                )
+                // GitHub Workflows & CI/CD info
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF0D1424)),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "v1.1 CI/CD Workflows Included:",
+                            color = CyanAccent,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 11.sp
+                        )
+                        Text(
+                            text = "• .github/workflows/android.yml (Automated APK build & test)\n• .github/workflows/windows-build.yml (Windows PC build)\n• gradlew & gradlew.bat wrapper scripts included",
+                            color = TextSecondary,
+                            fontSize = 10.sp,
+                            lineHeight = 14.sp
+                        )
+                    }
+                }
             }
         },
         confirmButton = {
@@ -195,9 +211,9 @@ fun VersionUpdateDialog(
                     if (!isChecking) {
                         isChecking = true
                         coroutineScope.launch {
-                            delay(900)
+                            delay(800)
                             isChecking = false
-                            updateMessage = "Checked just now: Mod Hub is on the latest Version 1.0 (0 updates pending)."
+                            updateMessage = "Checked just now: Mod Hub is on the latest Version 1.1 (All systems up to date)."
                         }
                     }
                 },

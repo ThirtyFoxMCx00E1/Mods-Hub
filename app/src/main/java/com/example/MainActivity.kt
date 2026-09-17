@@ -192,7 +192,7 @@ fun ModHubApp(
                       .testTag("version_pill")
                   ) {
                     Text(
-                      text = "v1.0 Ready",
+                      text = "v1.1 Ready",
                       color = CyanAccent,
                       fontSize = 10.sp,
                       fontWeight = FontWeight.Bold,
@@ -209,14 +209,14 @@ fun ModHubApp(
             }
           },
           actions = {
-            // Version 1.0 Update Status Action
+            // Version 1.1 Update Status Action
             IconButton(
               onClick = { showVersionUpdateDialog = true },
               modifier = Modifier.testTag("update_action_btn")
             ) {
               Icon(
                 imageVector = Icons.Default.Verified,
-                contentDescription = "Version 1.0",
+                contentDescription = "Version 1.1",
                 tint = Color(0xFF38BDF8)
               )
             }
