@@ -9,7 +9,11 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class BlogspotModRepository {
 
-    private val _currentBlogspotSource = MutableStateFlow("https://gtamc-modhub.blogspot.com")
+    companion object {
+        const val DEFAULT_BLOG_URL = "https://thirtyfoxmc.blogspot.com"
+    }
+
+    private val _currentBlogspotSource = MutableStateFlow(DEFAULT_BLOG_URL)
     val currentBlogspotSource: StateFlow<String> = _currentBlogspotSource.asStateFlow()
 
     private val _bookmarkedIds = MutableStateFlow<Set<String>>(emptySet())
@@ -42,6 +46,74 @@ class BlogspotModRepository {
 
     companion object {
         val curatedBlogspotMods: List<ModItem> = listOf(
+            ModItem(
+                id = "mc_authuser_v46",
+                title = "AuthUser System v4.6 (Minecraft Bedrock)",
+                game = GameCategory.MINECRAFT_BEDROCK,
+                category = "Security & Addon",
+                version = "v4.6",
+                fileSize = "3.8 MB",
+                author = "ThirtyFoxMC",
+                summary = "Official AuthUser v4.6 system for Minecraft Bedrock! Enhanced player authentication, PIN/password protection, session recovery, anti-bot security, and custom UI for servers & worlds.",
+                blogSpotUrl = "https://thirtyfoxmc.blogspot.com/2026/09/authuser-v46.html",
+                directDownloadUrl = "https://thirtyfoxmc.blogspot.com/2026/09/authuser-v46.html",
+                fileExtension = ".mcaddon",
+                targetVersion = "Minecraft Bedrock 1.20 - 1.21.x",
+                bannerDrawableRes = R.drawable.banner_minecraft,
+                rating = 4.98f,
+                downloadCount = 74500,
+                publishDate = "Sep 17, 2026",
+                isFeatured = true,
+                features = listOf(
+                    "Secure PIN and password registration / login for Bedrock players",
+                    "Automated popup dialogue prompts upon joining world or dedicated server",
+                    "IP and Device-Session auto-login with customizable session timeout",
+                    "Anti-spoofing and unauthorized skin/UUID protection against impersonation",
+                    "Full administrative controls, OP commands, and account password reset",
+                    "Fully compatible with Minecraft Bedrock 1.21.x Script API (GameTest)"
+                ),
+                installSteps = listOf(
+                    "Download the AuthUser v4.6 package (.mcaddon) directly from ThirtyFoxMC",
+                    "Open the downloaded file with Minecraft to automatically import Behavior & Resource packs",
+                    "In World Settings > Experiments, enable 'Beta APIs' (Script API)",
+                    "Attach the AuthUser pack under world Behavior Packs and click Play"
+                ),
+                htmlContent = """
+                    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #e2e8f0; line-height: 1.6;">
+                        <div style="background: linear-gradient(135deg, #064e3b, #022c22); border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1px solid #10b981;">
+                            <span style="background: #10b981; color: #022c22; font-weight: bold; padding: 4px 10px; border-radius: 6px; font-size: 12px; text-transform: uppercase;">Official ThirtyFoxMC Release</span>
+                            <h1 style="color: #f8fafc; margin: 12px 0 6px 0; font-size: 22px;">AuthUser v4.6 - Ultimate Player Authentication for Minecraft Bedrock</h1>
+                            <p style="color: #6ee7b7; font-size: 13px; margin: 0;">Author: <strong>ThirtyFoxMC</strong> | Date: September 17, 2026 | Category: Bedrock Addons & Security</p>
+                        </div>
+                        
+                        <h2 style="color: #34d399; font-size: 18px; border-bottom: 2px solid #34d399; padding-bottom: 6px;">Overview & Protection Capabilities</h2>
+                        <p>Welcome to the official <strong>AuthUser v4.6</strong> system for Minecraft Bedrock Edition (MCPE/Windows 10/11/Consoles). Prevent unauthorized logins, protect player inventories, and secure your world or dedicated BDS server effortlessly.</p>
+                        
+                        <div style="background: #0f291e; padding: 14px; border-radius: 8px; border-left: 4px solid #10b981; margin: 16px 0;">
+                            <h3 style="color: #6ee7b7; margin: 0 0 8px 0; font-size: 15px;">Core System Features:</h3>
+                            <ul style="margin: 0; padding-left: 20px; color: #cbd5e1;">
+                                <li>Custom registration and login dialogue interface (UI Form)</li>
+                                <li>Session persistence based on player device ID and IP address</li>
+                                <li>Blindness and movement lock until player enters correct credentials</li>
+                                <li>Anti-bruteforce lockouts and customizable maximum failed attempts</li>
+                                <li>Comprehensive OP admin management command tools</li>
+                            </ul>
+                        </div>
+
+                        <h2 style="color: #34d399; font-size: 18px; border-bottom: 2px solid #34d399; padding-bottom: 6px;">Installation & Setup</h2>
+                        <ol style="padding-left: 20px; color: #cbd5e1;">
+                            <li>Download the <code>authuser-v46.mcaddon</code> package directly below.</li>
+                            <li>Tap to open in Minecraft; wait for the success notification.</li>
+                            <li>Navigate to World Settings &gt; Experiments and toggle ON <strong>Beta APIs</strong>.</li>
+                            <li>Apply the AuthUser Behavior Pack to your world and enter the game.</li>
+                        </ol>
+
+                        <div style="background: #111e18; border: 1px solid #059669; border-radius: 8px; padding: 12px; margin-top: 20px;">
+                            <p style="color: #a7f3d0; font-size: 12px; margin: 0;"><strong>Official Source:</strong> https://thirtyfoxmc.blogspot.com/2026/09/authuser-v46.html</p>
+                        </div>
+                    </div>
+                """.trimIndent()
+            ),
             ModItem(
                 id = "gta_cleo_menu",
                 title = "CLEO Gold Cheat & Weapon Menu v2.10",

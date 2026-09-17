@@ -107,7 +107,7 @@ fun InstallGuideScreen(
                     }
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Custom Directory Path (v1.3)",
+                            text = "Custom Directory Path (v1.4)",
                             style = MaterialTheme.typography.titleSmall,
                             color = CyanAccent,
                             fontWeight = FontWeight.Bold

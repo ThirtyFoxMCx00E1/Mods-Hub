@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -87,7 +88,35 @@ fun BlogspotSourceDialog(
                 )
 
                 Text(
-                    text = "Default: https://gtamc-modhub.blogspot.com\nSupports standard Blogger/Blogspot HTML posts & feeds.",
+                    text = "Quick Presets:",
+                    color = TextSecondary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = { sourceText = "https://thirtyfoxmc.blogspot.com" },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text("ThirtyFoxMC", fontSize = 11.sp, color = CyanAccent)
+                    }
+
+                    OutlinedButton(
+                        onClick = { sourceText = "https://gtamc-modhub.blogspot.com" },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text("ModHub Default", fontSize = 11.sp, color = TextSecondary)
+                    }
+                }
+
+                Text(
+                    text = "Official: https://thirtyfoxmc.blogspot.com\nSupports standard Blogger/Blogspot HTML posts & feeds.",
                     style = MaterialTheme.typography.bodySmall,
                     color = TextMuted,
                     fontSize = 11.sp

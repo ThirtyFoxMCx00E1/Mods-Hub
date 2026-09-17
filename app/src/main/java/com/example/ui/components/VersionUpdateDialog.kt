@@ -30,7 +30,7 @@ fun VersionUpdateDialog(
     val coroutineScope = rememberCoroutineScope()
     var isChecking by remember { mutableStateOf(false) }
     var updateMessage by remember {
-        mutableStateOf("Version 1.3 is installed and active. Includes CI/CD unit test fixes, custom download folder path anywhere, 2h looping lobby music, and UI button click sound effects.")
+        mutableStateOf("Version 1.4 is installed and active. Includes ThirtyFoxMC official Blogspot integration, AuthUser v4.6 for Minecraft Bedrock, animated Splash Screen, offline alerts, and sponsored ads.")
     }
 
     AlertDialog(
@@ -49,20 +49,20 @@ fun VersionUpdateDialog(
                 ) {
                     Icon(
                         imageVector = Icons.Default.SystemUpdate,
-                        contentDescription = "Version 1.3 Update",
+                        contentDescription = "Version 1.4 Update",
                         tint = CyanAccent,
                         modifier = Modifier.size(22.dp)
                     )
                 }
                 Column {
                     Text(
-                        text = "Version 1.3 Update",
+                        text = "Version 1.4 Update",
                         style = MaterialTheme.typography.titleMedium,
                         color = TextPrimary,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Build 1.3 (CI Fixes, Custom Path & Audio)",
+                        text = "Build 1.4 (ThirtyFoxMC, AuthUser v4.6 & Splash)",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextMuted,
                         fontSize = 11.sp
@@ -91,7 +91,7 @@ fun VersionUpdateDialog(
                         )
                         Column {
                             Text(
-                                text = "v1.3 Release: Unit Test Fixes & Audio",
+                                text = "v1.4 Release: ThirtyFoxMC & Network Features",
                                 color = Color(0xFF10B981),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp
@@ -116,32 +116,38 @@ fun VersionUpdateDialog(
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Text(
-                            text = "New in Version 1.3:",
+                            text = "New in Version 1.4:",
                             color = AmberGta,
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp
                         )
 
                         Text(
-                            text = "• CI/CD Unit Test Fix: Resolved CustomPathManager parameters, methods, and companion constants for green GitHub Actions builds.",
+                            text = "• ThirtyFoxMC & AuthUser v4.6: Official Minecraft Bedrock AuthUser player authentication addon with direct Blogspot source.",
                             color = Color(0xFFE2E8F0),
                             fontSize = 11.sp,
                             lineHeight = 15.sp
                         )
                         Text(
-                            text = "• Custom Download Directory: Download anywhere in directory folder with editable paths & quick presets.",
+                            text = "• Splash Loading Screen: Fast and stylish startup loading screen displaying engine and network sync progress.",
                             color = Color(0xFFE2E8F0),
                             fontSize = 11.sp,
                             lineHeight = 15.sp
                         )
                         Text(
-                            text = "• 2-Hour Looping Lobby Music: Background playback with controls for volume, looping, and local videoplayback.m4a loading.",
+                            text = "• Offline Notice & User Choice: Informational alerts when internet is disconnected with full freedom to continue offline.",
                             color = Color(0xFFE2E8F0),
                             fontSize = 11.sp,
                             lineHeight = 15.sp
                         )
                         Text(
-                            text = "• Mystery Alert Button Clicks: Satisfying UI sound effect chime for all interactive buttons.",
+                            text = "• Occasional Sponsored Ads: Non-intrusive sponsored partner spotlights shown sometimes during online use.",
+                            color = Color(0xFFE2E8F0),
+                            fontSize = 11.sp,
+                            lineHeight = 15.sp
+                        )
+                        Text(
+                            text = "• Top Bar Polish: Removed cluttered 'I' circle tag for a cleaner, unified navigation bar.",
                             color = Color(0xFFE2E8F0),
                             fontSize = 11.sp,
                             lineHeight = 15.sp
@@ -197,7 +203,7 @@ fun VersionUpdateDialog(
                         coroutineScope.launch {
                             delay(600)
                             isChecking = false
-                            updateMessage = "Mod Hub v1.3 is fully up to date. CI tests verified and features active."
+                            updateMessage = "Mod Hub v1.4 is fully up to date. ThirtyFoxMC source and features active."
                         }
                     }
                 },

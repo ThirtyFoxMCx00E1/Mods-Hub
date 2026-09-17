@@ -73,6 +73,7 @@ import com.example.audio.LobbyMusicManager
 import com.example.audio.SoundEffectManager
 import com.example.data.BlogspotModRepository
 import com.example.data.DownloadHelper
+import com.example.data.NetworkHelper
 import com.example.model.DownloadState
 import com.example.model.GameCategory
 import com.example.model.ModItem
@@ -80,12 +81,15 @@ import com.example.ui.components.BlogspotSourceDialog
 import com.example.ui.components.CustomPathDialog
 import com.example.ui.components.DownloadsSheet
 import com.example.ui.components.LobbyMusicDialog
+import com.example.ui.components.OfflineNoticeDialog
 import com.example.ui.components.PublisherOnlyNoticeDialog
+import com.example.ui.components.SponsoredAdDialog
 import com.example.ui.components.VersionUpdateDialog
 import com.example.ui.screens.BlogFeedScreen
 import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.InstallGuideScreen
 import com.example.ui.screens.ModDetailScreen
+import com.example.ui.screens.SplashScreen
 import com.example.ui.theme.CyanAccent
 import com.example.ui.theme.MyApplicationTheme
 import com.example.ui.theme.ObsidianBg
@@ -105,6 +109,7 @@ class MainActivity : ComponentActivity() {
   private lateinit var downloadHelper: DownloadHelper
   private lateinit var soundEffectManager: SoundEffectManager
   private lateinit var lobbyMusicManager: LobbyMusicManager
+  private lateinit var networkHelper: NetworkHelper
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -112,6 +117,7 @@ class MainActivity : ComponentActivity() {
     downloadHelper = DownloadHelper(applicationContext)
     soundEffectManager = SoundEffectManager(applicationContext)
     lobbyMusicManager = LobbyMusicManager(applicationContext)
+    networkHelper = NetworkHelper(applicationContext)
 
     // Automatically start the 2h looping lobby music
     lobbyMusicManager.play()
@@ -122,7 +128,8 @@ class MainActivity : ComponentActivity() {
           repository = repository,
           downloadHelper = downloadHelper,
           soundEffectManager = soundEffectManager,
-          lobbyMusicManager = lobbyMusicManager
+          lobbyMusicManager = lobbyMusicManager,
+          networkHelper = networkHelper
         )
       }
     }
@@ -142,8 +149,10 @@ fun ModHubApp(
   downloadHelper: DownloadHelper,
   soundEffectManager: SoundEffectManager,
   lobbyMusicManager: LobbyMusicManager,
+  networkHelper: NetworkHelper,
   modifier: Modifier = Modifier
 ) {
+  var showSplashScreen by remember { mutableStateOf(true) }
   var selectedTab by remember { mutableIntStateOf(0) }
   var selectedGameFilter by remember { mutableStateOf<GameCategory?>(null) }
   var selectedMod by remember { mutableStateOf<ModItem?>(null) }
@@ -153,7 +162,11 @@ fun ModHubApp(
   var showVersionUpdateDialog by remember { mutableStateOf(false) }
   var showCustomPathDialog by remember { mutableStateOf(false) }
   var showLobbyMusicDialog by remember { mutableStateOf(false) }
+  var showOfflineNoticeDialog by remember { mutableStateOf(false) }
+  var showSponsoredAdDialog by remember { mutableStateOf(false) }
+  var onlineActionCount by remember { mutableIntStateOf(0) }
 
+  val isOnline by networkHelper.isOnline.collectAsState()
   val mods = remember { repository.getMods() }
   val bookmarkedIds by repository.bookmarkedIds.collectAsState()
   val blogspotSource by repository.currentBlogspotSource.collectAsState()
@@ -161,6 +174,27 @@ fun ModHubApp(
   val isMusicPlaying by lobbyMusicManager.isPlaying.collectAsState()
 
   val activeDownloadsCount = downloads.count { it.status == DownloadState.DOWNLOADING }
+
+  val onDownloadRequest: (ModItem) -> Unit = { mod ->
+    soundEffectManager.playClick()
+    if (!isOnline) {
+      showOfflineNoticeDialog = true
+    } else {
+      onlineActionCount++
+      if (onlineActionCount % 3 == 0) {
+        showSponsoredAdDialog = true
+      }
+      downloadHelper.startDownload(mod)
+    }
+  }
+
+  if (showSplashScreen) {
+    SplashScreen(
+      isOnline = isOnline,
+      onFinishSplash = { showSplashScreen = false }
+    )
+    return
+  }
 
   // Handle system back navigation when Mod Detail is active
   BackHandler(enabled = selectedMod != null) {
@@ -178,10 +212,7 @@ fun ModHubApp(
         soundEffectManager.playClick()
         selectedMod = null
       },
-      onDownload = { mod ->
-        soundEffectManager.playClick()
-        downloadHelper.startDownload(mod)
-      },
+      onDownload = onDownloadRequest,
       onToggleBookmark = { id ->
         soundEffectManager.playClick()
         repository.toggleBookmark(id)
@@ -217,32 +248,12 @@ fun ModHubApp(
                 )
               }
               Column {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                  Text(
-                    text = "Mod Hub",
-                    color = TextPrimary,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 17.sp
-                  )
-                  Surface(
-                    color = Color(0xFF1E293B),
-                    shape = RoundedCornerShape(4.dp),
-                    modifier = Modifier
-                      .clickable {
-                        soundEffectManager.playClick()
-                        showVersionUpdateDialog = true
-                      }
-                      .testTag("version_pill")
-                  ) {
-                    Text(
-                      text = "v1.3 Active",
-                      color = CyanAccent,
-                      fontSize = 10.sp,
-                      fontWeight = FontWeight.Bold,
-                      modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
-                    )
-                  }
-                }
+                Text(
+                  text = "Mod Hub",
+                  color = TextPrimary,
+                  fontWeight = FontWeight.ExtraBold,
+                  fontSize = 17.sp
+                )
                 Text(
                   text = "GTA SA & Minecraft Bedrock",
                   color = TextMuted,
@@ -451,6 +462,8 @@ fun ModHubApp(
             customPathManager = downloadHelper.customPathManager,
             lobbyMusicManager = lobbyMusicManager,
             soundEffectManager = soundEffectManager,
+            isOnline = isOnline,
+            onOpenOfflineNotice = { showOfflineNoticeDialog = true },
             onSelectGame = {
               soundEffectManager.playClick()
               selectedGameFilter = it
@@ -459,10 +472,7 @@ fun ModHubApp(
               soundEffectManager.playClick()
               selectedMod = it
             },
-            onDownloadClick = { mod ->
-              soundEffectManager.playClick()
-              downloadHelper.startDownload(mod)
-            },
+            onDownloadClick = onDownloadRequest,
             onToggleBookmark = { id ->
               soundEffectManager.playClick()
               repository.toggleBookmark(id)
@@ -483,6 +493,8 @@ fun ModHubApp(
           1 -> BlogFeedScreen(
             mods = mods,
             currentSource = blogspotSource,
+            isOnline = isOnline,
+            onOpenOfflineNotice = { showOfflineNoticeDialog = true },
             onSelectMod = {
               soundEffectManager.playClick()
               selectedMod = it
@@ -503,6 +515,37 @@ fun ModHubApp(
         }
       }
     }
+  }
+
+  // Offline Notice Dialog
+  if (showOfflineNoticeDialog) {
+    OfflineNoticeDialog(
+      onRetryConnection = {
+        soundEffectManager.playClick()
+        networkHelper.refresh()
+        if (networkHelper.checkIsOnline()) {
+          showOfflineNoticeDialog = false
+        }
+      },
+      onContinueOffline = {
+        soundEffectManager.playClick()
+        showOfflineNoticeDialog = false
+      },
+      onDismiss = {
+        soundEffectManager.playClick()
+        showOfflineNoticeDialog = false
+      }
+    )
+  }
+
+  // Sponsored Ad Dialog (appears sometimes when using online)
+  if (showSponsoredAdDialog) {
+    SponsoredAdDialog(
+      onDismiss = {
+        soundEffectManager.playClick()
+        showSponsoredAdDialog = false
+      }
+    )
   }
 
   // Publisher-Only Explanation Dialog

@@ -1,6 +1,6 @@
 {
   "name": "Mod Hub",
-  "description": "Version 1.3: Curated GTA SA & Minecraft mods from verified Blogspot sources with custom download folder paths anywhere on device, 2h looping lobby music, and UI button click sound effects.",
+  "description": "Version 1.4: Curated GTA SA & Minecraft Bedrock mods featuring ThirtyFoxMC official source, AuthUser v4.6, animated splash loading screen, offline network alerts, and sponsored ads.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

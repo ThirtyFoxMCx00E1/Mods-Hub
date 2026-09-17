@@ -73,7 +73,8 @@ import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.runtime.collectAsState
 import com.example.audio.LobbyMusicManager
 import com.example.audio.SoundEffectManager
@@ -94,6 +95,8 @@ fun HomeScreen(
     soundEffectManager: SoundEffectManager? = null,
     onOpenCustomPath: (() -> Unit)? = null,
     onOpenLobbyMusic: (() -> Unit)? = null,
+    isOnline: Boolean = true,
+    onOpenOfflineNotice: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     var searchQuery by remember { mutableStateOf("") }
@@ -127,7 +130,77 @@ fun HomeScreen(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        // v1.2 Lobby Music & Audio Quick Bar
+        // Offline Warning Banner
+        if (!isOnline) {
+            item {
+                Spacer(modifier = Modifier.height(2.dp))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            soundEffectManager?.playClick()
+                            onOpenOfflineNotice?.invoke()
+                        }
+                        .testTag("offline_warning_banner"),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF261214)),
+                    shape = RoundedCornerShape(12.dp),
+                    border = CardDefaults.outlinedCardBorder().copy(
+                        brush = Brush.horizontalGradient(
+                            listOf(Color(0xFFEF4444).copy(alpha = 0.6f), Color(0xFF261214))
+                        )
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFEF4444).copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.WifiOff,
+                                contentDescription = "Offline Notice",
+                                tint = Color(0xFFEF4444),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Offline Mode Active",
+                                color = Color(0xFFFCA5A5),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
+                            Text(
+                                text = "Live downloads require internet. Tap for offline options.",
+                                color = Color(0xFFE2E8F0),
+                                fontSize = 11.sp,
+                                lineHeight = 14.sp
+                            )
+                        }
+                        Surface(
+                            color = Color(0xFF7F1D1D),
+                            shape = RoundedCornerShape(6.dp)
+                        ) {
+                            Text(
+                                text = "Info",
+                                color = Color.White,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // v1.4 Lobby Music & Audio Quick Bar
         item {
             Spacer(modifier = Modifier.height(2.dp))
             Card(
@@ -263,7 +336,7 @@ fun HomeScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Download Directory (v1.3)",
+                                text = "Download Directory (v1.4)",
                                 color = CyanAccent,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp
@@ -294,7 +367,7 @@ fun HomeScreen(
             }
         }
 
-        // Publisher Ownership Banner (Explaining why user uploads are disabled in v1.3)
+        // Publisher Ownership Banner (Explaining why user uploads are disabled in v1.4)
         item {
             Card(
                 modifier = Modifier
@@ -334,7 +407,7 @@ fun HomeScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Publisher-Only Mode • v1.3",
+                                text = "Publisher-Only Mode • v1.4",
                                 color = TextPrimary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp

@@ -50,12 +50,16 @@ import com.example.ui.theme.TextMuted
 import com.example.ui.theme.TextPrimary
 import com.example.ui.theme.TextSecondary
 
+import androidx.compose.material.icons.filled.WifiOff
+
 @Composable
 fun BlogFeedScreen(
     mods: List<ModItem>,
     currentSource: String,
     onSelectMod: (ModItem) -> Unit,
     onChangeSource: () -> Unit,
+    isOnline: Boolean = true,
+    onOpenOfflineNotice: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -64,6 +68,46 @@ fun BlogFeedScreen(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
+        if (!isOnline) {
+            item {
+                Spacer(modifier = Modifier.height(4.dp))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onOpenOfflineNotice?.invoke() }
+                        .testTag("blog_feed_offline_card"),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF261214)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.WifiOff,
+                            contentDescription = null,
+                            tint = Color(0xFFEF4444),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Offline Feed Mode",
+                                color = Color(0xFFFCA5A5),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
+                            Text(
+                                text = "Internet connection required to load live Blogger HTML updates. Tap for options.",
+                                color = Color(0xFFCBD5E1),
+                                fontSize = 11.sp
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
         item {
             Spacer(modifier = Modifier.height(4.dp))
             // Blog banner & feed connection card
