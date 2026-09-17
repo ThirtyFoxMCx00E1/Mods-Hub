@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -70,6 +71,11 @@ import com.example.ui.theme.TextMuted
 import com.example.ui.theme.TextPrimary
 import com.example.ui.theme.TextSecondary
 
+import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.runtime.collectAsState
+import com.example.audio.SoundEffectManager
+import com.example.data.CustomPathManager
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModDetailScreen(
@@ -78,11 +84,24 @@ fun ModDetailScreen(
     onBack: () -> Unit,
     onDownload: (ModItem) -> Unit,
     onToggleBookmark: (String) -> Unit,
+    customPathManager: CustomPathManager? = null,
+    soundEffectManager: SoundEffectManager? = null,
+    onOpenCustomPath: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Blogspot HTML", "Overview & Specs", "Install Guide")
+
+    val customPath = customPathManager?.currentPath?.collectAsState()?.value
+    val effectivePath = remember(customPath, mod) {
+        customPathManager?.getEffectivePath(mod.game)
+            ?: if (mod.game == com.example.model.GameCategory.GTA_SA) {
+                "emulated/0/Android_unprotected/data/com.rockstargames.gtasa/mods"
+            } else {
+                "emulated/0/Android/data/com.mojang.minecraftpe/files/games/com.mojang/resource_packs"
+            }
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -99,7 +118,13 @@ fun ModDetailScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack, modifier = Modifier.testTag("back_button")) {
+                    IconButton(
+                        onClick = {
+                            soundEffectManager?.playClick()
+                            onBack()
+                        },
+                        modifier = Modifier.testTag("back_button")
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -109,6 +134,7 @@ fun ModDetailScreen(
                 },
                 actions = {
                     IconButton(onClick = {
+                        soundEffectManager?.playClick()
                         val shareIntent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
                             putExtra(Intent.EXTRA_SUBJECT, mod.title)
@@ -124,6 +150,7 @@ fun ModDetailScreen(
                     }
 
                     IconButton(onClick = {
+                        soundEffectManager?.playClick()
                         try {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(mod.blogSpotUrl))
                             context.startActivity(intent)
@@ -149,49 +176,96 @@ fun ModDetailScreen(
                 border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(SlateCardBorder)),
                 shadowElevation = 12.dp
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    IconButton(
-                        onClick = { onToggleBookmark(mod.id) },
+                    // Path preview banner
+                    Row(
                         modifier = Modifier
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(12.dp))
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
                             .background(Color(0xFF0F172A))
+                            .clickable {
+                                soundEffectManager?.playClick()
+                                onOpenCustomPath?.invoke()
+                            }
+                            .padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Icon(
-                            imageVector = if (isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                            contentDescription = "Bookmark",
-                            tint = if (isBookmarked) mod.game.primaryColor else TextSecondary
+                            imageVector = Icons.Default.FolderOpen,
+                            contentDescription = null,
+                            tint = CyanAccent,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = "Save to: $effectivePath",
+                            color = TextSecondary,
+                            fontSize = 11.sp,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = "Edit",
+                            color = CyanAccent,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold
                         )
                     }
 
-                    Button(
-                        onClick = { onDownload(mod) },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp)
-                            .testTag("detail_download_btn"),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = mod.game.primaryColor)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Download,
-                            contentDescription = null,
-                            tint = Color.Black,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Download (${mod.fileSize})",
-                            color = Color.Black,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 15.sp
-                        )
+                        IconButton(
+                            onClick = {
+                                soundEffectManager?.playClick()
+                                onToggleBookmark(mod.id)
+                            },
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color(0xFF0F172A))
+                        ) {
+                            Icon(
+                                imageVector = if (isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                                contentDescription = "Bookmark",
+                                tint = if (isBookmarked) mod.game.primaryColor else TextSecondary
+                            )
+                        }
+
+                        Button(
+                            onClick = {
+                                soundEffectManager?.playClick()
+                                onDownload(mod)
+                            },
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(48.dp)
+                                .testTag("detail_download_btn"),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = mod.game.primaryColor)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Download,
+                                contentDescription = null,
+                                tint = Color.Black,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Download (${mod.fileSize})",
+                                color = Color.Black,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 15.sp
+                            )
+                        }
                     }
                 }
             }

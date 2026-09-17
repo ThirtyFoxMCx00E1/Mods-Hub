@@ -81,7 +81,6 @@ class CustomPathManager(context: Context) {
         return when (game) {
             GameCategory.GTA_SA -> PRESET_GTA_UNPROTECTED
             GameCategory.MINECRAFT_BEDROCK -> PRESET_MC_RESOURCES
-            GameCategory.ALL -> _currentPath.value
         }
     }
 
@@ -99,7 +98,6 @@ class CustomPathManager(context: Context) {
         val defaultPath = when (game) {
             GameCategory.GTA_SA -> PRESET_GTA_UNPROTECTED
             GameCategory.MINECRAFT_BEDROCK -> PRESET_MC_RESOURCES
-            GameCategory.ALL -> PRESET_DOWNLOADS
         }
         setPath(defaultPath)
     }

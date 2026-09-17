@@ -68,6 +68,17 @@ import com.example.ui.theme.TextMuted
 import com.example.ui.theme.TextPrimary
 import com.example.ui.theme.TextSecondary
 
+import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.runtime.collectAsState
+import com.example.audio.LobbyMusicManager
+import com.example.audio.SoundEffectManager
+import com.example.data.CustomPathManager
+
 @Composable
 fun HomeScreen(
     mods: List<ModItem>,
@@ -78,10 +89,20 @@ fun HomeScreen(
     onDownloadClick: (ModItem) -> Unit,
     onToggleBookmark: (String) -> Unit,
     onOpenPublisherInfo: () -> Unit,
+    customPathManager: CustomPathManager? = null,
+    lobbyMusicManager: LobbyMusicManager? = null,
+    soundEffectManager: SoundEffectManager? = null,
+    onOpenCustomPath: (() -> Unit)? = null,
+    onOpenLobbyMusic: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedCategoryFilter by remember { mutableStateOf<String?>(null) }
+
+    val currentCustomPath = customPathManager?.currentPath?.collectAsState()?.value
+        ?: "emulated/0/Android_unprotected/data/com.rockstargames.gtasa/mods"
+    val isMusicPlaying = lobbyMusicManager?.isPlaying?.collectAsState()?.value ?: false
+    val trackTitle = lobbyMusicManager?.trackTitle?.collectAsState()?.value ?: "videoplayback (2).m4a"
 
     val categories = remember(mods, selectedGame) {
         val filteredByGame = if (selectedGame == null) mods else mods.filter { it.game == selectedGame }
@@ -106,13 +127,182 @@ fun HomeScreen(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        // Publisher Ownership Banner (Explaining why user uploads are disabled in v1.0)
+        // v1.2 Lobby Music & Audio Quick Bar
         item {
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onOpenPublisherInfo() }
+                    .testTag("lobby_music_banner"),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF0F172A)),
+                shape = RoundedCornerShape(12.dp),
+                border = CardDefaults.outlinedCardBorder().copy(
+                    brush = Brush.horizontalGradient(
+                        listOf(Color(0xFF10B981).copy(alpha = 0.5f), Color(0xFF0F172A))
+                    )
+                )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF10B981).copy(alpha = 0.2f))
+                            .clickable {
+                                soundEffectManager?.playClick()
+                                lobbyMusicManager?.togglePlayPause()
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (isMusicPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                            contentDescription = if (isMusicPlaying) "Pause Music" else "Play Music",
+                            tint = Color(0xFF10B981),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable {
+                                soundEffectManager?.playClick()
+                                onOpenLobbyMusic?.invoke()
+                            }
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Text(
+                                text = "Lobby Music (2h Loop)",
+                                color = Color(0xFF10B981),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
+                            Surface(
+                                color = if (isMusicPlaying) Color(0xFF064E3B) else Color(0xFF1E293B),
+                                shape = RoundedCornerShape(4.dp)
+                            ) {
+                                Text(
+                                    text = if (isMusicPlaying) "PLAYING" else "PAUSED",
+                                    color = if (isMusicPlaying) Color(0xFF34D399) else TextMuted,
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                                )
+                            }
+                        }
+                        Text(
+                            text = trackTitle,
+                            color = TextSecondary,
+                            fontSize = 11.sp,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            soundEffectManager?.playClick()
+                            onOpenLobbyMusic?.invoke()
+                        },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Tune,
+                            contentDescription = "Audio Settings",
+                            tint = TextSecondary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        // v1.2 Custom Download Folder Directory Path Bar
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        soundEffectManager?.playClick()
+                        onOpenCustomPath?.invoke()
+                    }
+                    .testTag("custom_path_banner"),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF131B2E)),
+                shape = RoundedCornerShape(12.dp),
+                border = CardDefaults.outlinedCardBorder().copy(
+                    brush = Brush.horizontalGradient(
+                        listOf(CyanAccent.copy(alpha = 0.5f), Color(0xFF131B2E))
+                    )
+                )
+            ) {
+                Row(
+                    modifier = Modifier.padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(34.dp)
+                            .clip(CircleShape)
+                            .background(CyanAccent.copy(alpha = 0.15f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FolderOpen,
+                            contentDescription = "Custom Path",
+                            tint = CyanAccent,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(
+                                text = "Download Directory (v1.2)",
+                                color = CyanAccent,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
+                        }
+                        Text(
+                            text = currentCustomPath,
+                            color = TextSecondary,
+                            fontSize = 11.sp,
+                            lineHeight = 14.sp,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        )
+                    }
+                    Surface(
+                        color = Color(0xFF1E293B),
+                        shape = RoundedCornerShape(6.dp)
+                    ) {
+                        Text(
+                            text = "Change",
+                            color = CyanAccent,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        // Publisher Ownership Banner (Explaining why user uploads are disabled in v1.2)
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        soundEffectManager?.playClick()
+                        onOpenPublisherInfo()
+                    }
                     .testTag("publisher_policy_banner"),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF0F172A)),
                 shape = RoundedCornerShape(12.dp),
@@ -144,7 +334,7 @@ fun HomeScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Publisher-Only Mode • v1.1",
+                                text = "Publisher-Only Mode • v1.2",
                                 color = TextPrimary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp

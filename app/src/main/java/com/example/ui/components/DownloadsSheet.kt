@@ -52,11 +52,14 @@ import com.example.ui.theme.TextMuted
 import com.example.ui.theme.TextPrimary
 import com.example.ui.theme.TextSecondary
 
+import androidx.compose.material.icons.filled.FolderOpen
+
 @Composable
 fun DownloadsSheet(
     downloads: List<DownloadItem>,
     onOpenItem: (DownloadItem) -> Unit,
     onDeleteItem: (Long) -> Unit,
+    onConfigurePath: (() -> Unit)? = null,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -96,26 +99,40 @@ fun DownloadsSheet(
                     }
                     Column {
                         Text(
-                            text = "Mod Downloads",
+                            text = "Mod Downloads (v1.2)",
                             style = MaterialTheme.typography.titleMedium,
                             color = TextPrimary,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Storage: Internal/Download/Mods/",
+                            text = "Custom Directory Path Enabled",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TextMuted,
+                            color = CyanAccent,
                             fontSize = 11.sp
                         )
                     }
                 }
 
-                IconButton(onClick = onClose) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close Downloads",
-                        tint = TextSecondary
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (onConfigurePath != null) {
+                        IconButton(
+                            onClick = onConfigurePath,
+                            modifier = Modifier.testTag("configure_path_sheet_btn")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FolderOpen,
+                                contentDescription = "Change Path",
+                                tint = CyanAccent
+                            )
+                        }
+                    }
+                    IconButton(onClick = onClose) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close Downloads",
+                            tint = TextSecondary
+                        )
+                    }
                 }
             }
 
@@ -202,15 +219,20 @@ private fun DownloadItemRow(
                         color = TextMuted,
                         fontSize = 11.sp
                     )
-                    if (item.game == com.example.model.GameCategory.GTA_SA) {
-                        Text(
-                            text = "Path: emulated/0/Android_unprotected/data/com.rockstargames.gtasa/mods & files/CLEO (or game root)",
-                            color = CyanAccent,
-                            fontSize = 10.sp,
-                            lineHeight = 13.sp,
-                            modifier = Modifier.padding(top = 2.dp)
-                        )
+                    val effectivePath = if (item.targetPath.isNotBlank()) {
+                        item.targetPath
+                    } else if (item.game == com.example.model.GameCategory.GTA_SA) {
+                        "emulated/0/Android_unprotected/data/com.rockstargames.gtasa/mods & files/CLEO (or game root)"
+                    } else {
+                        "emulated/0/Android/data/com.mojang.minecraftpe/files/games/com.mojang/resource_packs"
                     }
+                    Text(
+                        text = "Path: $effectivePath",
+                        color = CyanAccent,
+                        fontSize = 10.sp,
+                        lineHeight = 13.sp,
+                        modifier = Modifier.padding(top = 2.dp)
+                    )
                 }
 
                 IconButton(onClick = onDelete, modifier = Modifier.size(32.dp)) {

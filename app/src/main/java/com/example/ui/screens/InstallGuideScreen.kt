@@ -52,10 +52,23 @@ import com.example.ui.theme.TextMuted
 import com.example.ui.theme.TextPrimary
 import com.example.ui.theme.TextSecondary
 
+import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.runtime.collectAsState
+import com.example.audio.SoundEffectManager
+import com.example.data.CustomPathManager
+
 @Composable
-fun InstallGuideScreen(modifier: Modifier = Modifier) {
+fun InstallGuideScreen(
+    customPathManager: CustomPathManager? = null,
+    soundEffectManager: SoundEffectManager? = null,
+    onOpenCustomPath: (() -> Unit)? = null,
+    modifier: Modifier = Modifier
+) {
     var selectedTab by remember { mutableIntStateOf(0) }
     val games = listOf("GTA SA Mobile", "Minecraft Bedrock")
+    val currentPath = customPathManager?.currentPath?.collectAsState()?.value
 
     Column(
         modifier = modifier
@@ -65,6 +78,61 @@ fun InstallGuideScreen(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Spacer(modifier = Modifier.height(4.dp))
+
+        // v1.2 Custom Path Quick Config Card
+        if (onOpenCustomPath != null) {
+            Card(
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF131B2E)),
+                shape = RoundedCornerShape(14.dp),
+                border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(CyanAccent.copy(alpha = 0.4f)))
+            ) {
+                Row(
+                    modifier = Modifier.padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(38.dp)
+                            .clip(CircleShape)
+                            .background(CyanAccent.copy(alpha = 0.2f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FolderOpen,
+                            contentDescription = null,
+                            tint = CyanAccent,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Custom Directory Path (v1.2)",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = CyanAccent,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = currentPath ?: "emulated/0/Android_unprotected/data/com.rockstargames.gtasa/mods",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TextSecondary,
+                            fontSize = 11.sp,
+                            maxLines = 1
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            soundEffectManager?.playClick()
+                            onOpenCustomPath()
+                        },
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = CyanAccent),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, CyanAccent)
+                    ) {
+                        Text("Edit", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
 
         // Guide header
         Card(
@@ -93,7 +161,7 @@ fun InstallGuideScreen(modifier: Modifier = Modifier) {
                 }
                 Column {
                     Text(
-                        text = "Android Mod Installer Manual",
+                        text = "Android Mod Installer Manual (v1.2)",
                         style = MaterialTheme.typography.titleMedium,
                         color = TextPrimary,
                         fontWeight = FontWeight.Bold
@@ -117,7 +185,10 @@ fun InstallGuideScreen(modifier: Modifier = Modifier) {
             games.forEachIndexed { index, name ->
                 Tab(
                     selected = selectedTab == index,
-                    onClick = { selectedTab = index },
+                    onClick = {
+                        soundEffectManager?.playClick()
+                        selectedTab = index
+                    },
                     text = {
                         Text(
                             text = name,
