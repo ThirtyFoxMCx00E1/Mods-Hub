@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Mod Hub</string>
+    <string name="publisher_tagline">Official Blogspot Mod Catalog • Version 1.0</string>
+    <string name="upload_notice_title">Publisher-Only Repository</string>
+    <string name="upload_notice_desc">For version 1.0, mods are published exclusively by the official Blogspot owner to ensure all GTA SA and Minecraft Bedrock mods are verified, virus-free, and tested for Android.</string>
+</resources>
