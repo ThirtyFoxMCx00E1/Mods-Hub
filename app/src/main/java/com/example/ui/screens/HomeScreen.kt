@@ -263,7 +263,7 @@ fun HomeScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Download Directory (v1.2)",
+                                text = "Download Directory (v1.3)",
                                 color = CyanAccent,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp
@@ -294,7 +294,7 @@ fun HomeScreen(
             }
         }
 
-        // Publisher Ownership Banner (Explaining why user uploads are disabled in v1.2)
+        // Publisher Ownership Banner (Explaining why user uploads are disabled in v1.3)
         item {
             Card(
                 modifier = Modifier
@@ -334,7 +334,7 @@ fun HomeScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Publisher-Only Mode • v1.2",
+                                text = "Publisher-Only Mode • v1.3",
                                 color = TextPrimary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp

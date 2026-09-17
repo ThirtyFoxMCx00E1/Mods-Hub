@@ -99,7 +99,7 @@ fun DownloadsSheet(
                     }
                     Column {
                         Text(
-                            text = "Mod Downloads (v1.2)",
+                            text = "Mod Downloads (v1.3)",
                             style = MaterialTheme.typography.titleMedium,
                             color = TextPrimary,
                             fontWeight = FontWeight.Bold

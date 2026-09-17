@@ -10,6 +10,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeDown
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -232,7 +235,7 @@ fun LobbyMusicDialog(
                                 }
                             ) {
                                 Icon(
-                                    imageVector = if (volume > 0.05f) Icons.Default.VolumeUp else Icons.Default.VolumeOff,
+                                    imageVector = if (volume > 0.05f) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
                                     contentDescription = "Volume",
                                     tint = if (volume > 0.05f) Color.White else Color(0xFFEF4444)
                                 )
@@ -246,7 +249,7 @@ fun LobbyMusicDialog(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.VolumeDown,
+                                imageVector = Icons.AutoMirrored.Filled.VolumeDown,
                                 contentDescription = "Min Volume",
                                 tint = Color(0xFF64748B),
                                 modifier = Modifier.size(16.dp)
@@ -262,7 +265,7 @@ fun LobbyMusicDialog(
                                 )
                             )
                             Icon(
-                                imageVector = Icons.Default.VolumeUp,
+                                imageVector = Icons.AutoMirrored.Filled.VolumeUp,
                                 contentDescription = "Max Volume",
                                 tint = Color(0xFF64748B),
                                 modifier = Modifier.size(16.dp)

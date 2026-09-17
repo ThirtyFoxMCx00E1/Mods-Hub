@@ -19,6 +19,7 @@ class CustomPathManager(context: Context) {
 
     companion object {
         const val PRESET_GTA_UNPROTECTED = "emulated/0/Android_unprotected/data/com.rockstargames.gtasa/mods"
+        const val DEFAULT_GTA_SA_PATH = PRESET_GTA_UNPROTECTED
         const val PRESET_GTA_CLEO = "emulated/0/Android_unprotected/data/com.rockstargames.gtasa/files/CLEO"
         const val PRESET_GTA_ROOT = "emulated/0/Android/data/com.rockstargames.gtasa/files"
         const val PRESET_MC_RESOURCES = "emulated/0/Android/data/com.mojang.minecraftpe/files/games/com.mojang/resource_packs"
@@ -94,7 +95,11 @@ class CustomPathManager(context: Context) {
             .apply()
     }
 
-    fun resetToDefault(game: GameCategory) {
+    fun setCustomPath(newPath: String) {
+        setPath(newPath)
+    }
+
+    fun resetToDefault(game: GameCategory = GameCategory.GTA_SA) {
         val defaultPath = when (game) {
             GameCategory.GTA_SA -> PRESET_GTA_UNPROTECTED
             GameCategory.MINECRAFT_BEDROCK -> PRESET_MC_RESOURCES

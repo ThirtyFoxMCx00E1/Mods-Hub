@@ -96,7 +96,8 @@ import com.example.ui.theme.TextPrimary
 import com.example.ui.theme.TextSecondary
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.Article
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 
 class MainActivity : ComponentActivity() {
 
@@ -234,7 +235,7 @@ fun ModHubApp(
                       .testTag("version_pill")
                   ) {
                     Text(
-                      text = "v1.2 Active",
+                      text = "v1.3 Active",
                       color = CyanAccent,
                       fontSize = 10.sp,
                       fontWeight = FontWeight.Bold,
@@ -260,7 +261,7 @@ fun ModHubApp(
               modifier = Modifier.testTag("lobby_music_action")
             ) {
               Icon(
-                imageVector = if (isMusicPlaying) Icons.Default.VolumeUp else Icons.Default.MusicNote,
+                imageVector = if (isMusicPlaying) Icons.AutoMirrored.Filled.VolumeUp else Icons.Default.MusicNote,
                 contentDescription = "Lobby Music",
                 tint = if (isMusicPlaying) Color(0xFF10B981) else TextSecondary
               )
@@ -281,7 +282,7 @@ fun ModHubApp(
               )
             }
 
-            // Version 1.2 Update Status Action
+            // Version 1.3 Update Status Action
             IconButton(
               onClick = {
                 soundEffectManager.playClick()
@@ -291,7 +292,7 @@ fun ModHubApp(
             ) {
               Icon(
                 imageVector = Icons.Default.Verified,
-                contentDescription = "Version 1.2",
+                contentDescription = "Version 1.3",
                 tint = Color(0xFF38BDF8)
               )
             }
@@ -397,7 +398,7 @@ fun ModHubApp(
             },
             icon = {
               Icon(
-                imageVector = Icons.Default.Article,
+                imageVector = Icons.AutoMirrored.Filled.Article,
                 contentDescription = "Blogspot Feed"
               )
             },
@@ -529,7 +530,7 @@ fun ModHubApp(
     )
   }
 
-  // Version 1.2 Status & Update Check Dialog
+  // Version 1.3 Status & Update Check Dialog
   if (showVersionUpdateDialog) {
     VersionUpdateDialog(
       onDismiss = {

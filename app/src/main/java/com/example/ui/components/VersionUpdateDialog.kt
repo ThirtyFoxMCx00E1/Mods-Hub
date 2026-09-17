@@ -30,7 +30,7 @@ fun VersionUpdateDialog(
     val coroutineScope = rememberCoroutineScope()
     var isChecking by remember { mutableStateOf(false) }
     var updateMessage by remember {
-        mutableStateOf("Version 1.2 is installed and active. Includes custom download folder path anywhere, 2h looping lobby music, and UI button click sound effects.")
+        mutableStateOf("Version 1.3 is installed and active. Includes CI/CD unit test fixes, custom download folder path anywhere, 2h looping lobby music, and UI button click sound effects.")
     }
 
     AlertDialog(
@@ -49,20 +49,20 @@ fun VersionUpdateDialog(
                 ) {
                     Icon(
                         imageVector = Icons.Default.SystemUpdate,
-                        contentDescription = "Version 1.2 Update",
+                        contentDescription = "Version 1.3 Update",
                         tint = CyanAccent,
                         modifier = Modifier.size(22.dp)
                     )
                 }
                 Column {
                     Text(
-                        text = "Version 1.2 Update",
+                        text = "Version 1.3 Update",
                         style = MaterialTheme.typography.titleMedium,
                         color = TextPrimary,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Build 1.2 (Custom Path & Audio Engine)",
+                        text = "Build 1.3 (CI Fixes, Custom Path & Audio)",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextMuted,
                         fontSize = 11.sp
@@ -91,7 +91,7 @@ fun VersionUpdateDialog(
                         )
                         Column {
                             Text(
-                                text = "v1.2 Release: Custom Folders & Audio",
+                                text = "v1.3 Release: Unit Test Fixes & Audio",
                                 color = Color(0xFF10B981),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp
@@ -116,12 +116,18 @@ fun VersionUpdateDialog(
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Text(
-                            text = "New in Version 1.2:",
+                            text = "New in Version 1.3:",
                             color = AmberGta,
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp
                         )
 
+                        Text(
+                            text = "• CI/CD Unit Test Fix: Resolved CustomPathManager parameters, methods, and companion constants for green GitHub Actions builds.",
+                            color = Color(0xFFE2E8F0),
+                            fontSize = 11.sp,
+                            lineHeight = 15.sp
+                        )
                         Text(
                             text = "• Custom Download Directory: Download anywhere in directory folder with editable paths & quick presets.",
                             color = Color(0xFFE2E8F0),
@@ -191,7 +197,7 @@ fun VersionUpdateDialog(
                         coroutineScope.launch {
                             delay(600)
                             isChecking = false
-                            updateMessage = "Mod Hub v1.2 is fully up to date. Custom paths and 2h audio engine active."
+                            updateMessage = "Mod Hub v1.3 is fully up to date. CI tests verified and features active."
                         }
                     }
                 },

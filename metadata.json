@@ -1,6 +1,6 @@
 {
   "name": "Mod Hub",
-  "description": "Version 1.2: Curated GTA SA & Minecraft mods from verified Blogspot sources with custom download folder paths anywhere on device, 2h looping lobby music, and UI button click sound effects.",
+  "description": "Version 1.3: Curated GTA SA & Minecraft mods from verified Blogspot sources with custom download folder paths anywhere on device, 2h looping lobby music, and UI button click sound effects.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
